@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from './components/ui/Button';
 
 export default function HomePage() {
   const router = useRouter();
@@ -21,38 +22,16 @@ export default function HomePage() {
 
   return (
     <div className="w-full max-w-xl flex flex-col gap-6 items-center justify-center py-10">
-      {/*  TODO: Card component with button Create room  */}
       <div className="w-full max-w-xl flex gap-2 items-center justify-center">
         <div className="text-sm font-400">Create new conference:</div>
-        {/* TODO:  Button component */}
-        <button
-          onClick={createRoom}
-          className="
-            inline-flex items-center justify-center
-            rounded-lg
-            bg-yellow-100
-            text-sm sm:text-base
-            px-4 sm:px-6
-            py-2
-            font-medium
-            transition
-            duration-200
-            ease-out
-          enabled:hover:bg-yellow-200
-            enabled:active:scale-95
-            disabled:opacity-50
-            disabled:cursor-auto"
-        >
-          Create new room
-        </button>
+        <Button onClick={createRoom}>Create new room</Button>
       </div>
 
-      {/* TODO: Join Room Form */}
       <form onSubmit={joinRoom} className="w-full max-w-xl flex gap-2 items-center justify-center">
         <label htmlFor="roomId" className="text-sm font-400">
           Enter a conference with RoomID
         </label>
-
+        {/*  TODO: input component  */}
         <input
           id="roomId"
           type="text"
@@ -63,28 +42,9 @@ export default function HomePage() {
           className="rounded-l bg-yellow-50 px-3 py-2 text-sm font-400 h-10 outline-yellow-200"
         />
 
-        <button
-          type="submit"
-          className="
-            inline-flex items-center justify-center
-            rounded-lg
-            bg-yellow-100
-            text-sm sm:text-base
-            px-4 sm:px-6
-            py-2
-            font-medium
-            transition
-            duration-200
-            ease-out
-          enabled:hover:bg-yellow-200
-            enabled:active:scale-95
-            disabled:opacity-50
-            disabled:cursor-auto
-         "
-          disabled={!roomId.trim()}
-        >
+        <Button type="submit" disabled={!roomId.trim()}>
           Join
-        </button>
+        </Button>
       </form>
     </div>
   );

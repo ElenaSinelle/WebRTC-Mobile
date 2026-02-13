@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Header from './components/header/header';
-import Footer from './components/footer/footer';
+import Header from './components/layout/header/header';
+import Footer from './components/layout/footer/footer';
 
 export const metadata: Metadata = {
   title: 'WebRTC App',
