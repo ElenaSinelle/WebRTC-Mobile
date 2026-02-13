@@ -1,7 +1,9 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
+
+import { useRouter } from 'next/navigation';
 
 interface PeerConnection {
   userId: string;
@@ -11,19 +13,24 @@ interface PeerConnection {
 
 export default function RoomPage() {
   const params = useParams();
-  const roomId = params.roomId as string;
+  const roomId = params?.roomId as string;
   const [userId] = useState(() => `user-${Math.random().toString(36).substring(2, 9)}`);
   const [peers, setPeers] = useState<PeerConnection[]>([]);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   const [isReconnecting, setIsReconnecting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<
     'connecting' | 'connected' | 'disconnected' | 'reconnecting'
   >('connecting');
   const [copied, setCopied] = useState(false);
-
+  const [isRoomCreator, setIsRoomCreator] = useState(false);
+  const [showEndConfirmation, setShowEndConfirmation] = useState(false);
+  const socketRef = useRef(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
+  const peersRef = useRef<PeerConnection[]>([]);
+  const router = useRouter();
 
   const toggleMute = () => {
     if (localStreamRef.current) {
@@ -72,11 +79,49 @@ export default function RoomPage() {
     }
   };
 
+  const leaveRoom = () => {
+    if (socketRef.current) {
+      socketRef.current.emit('leave-room', roomId, userId);
+    }
+
+    peersRef.current.forEach((peer) => {
+      peer.connection.close();
+    });
+
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach((track) => track.stop());
+    }
+
+    router.push('/');
+  };
+
+  const endConferenceForAll = () => {
+    if (socketRef.current) {
+      socketRef.current.emit('end-room', roomId, userId);
+      setShowEndConfirmation(false);
+
+      peersRef.current.forEach((peer) => {
+        peer.connection.close();
+      });
+
+      if (localStreamRef.current) {
+        localStreamRef.current.getTracks().forEach((track) => track.stop());
+      }
+
+      router.push('/');
+    }
+  };
+
   return (
     <div className="w-full max-w-7xl flex flex-col gap-6 items-center py-6">
       <div className="flex flex-col gap-1 items-center justify-center">
         <h2 className="text-xl font-bold">Room ID: {roomId}</h2>
         <div className="flex items-center gap-2">{getStatusText()}</div>
+        {isRoomCreator && (
+          <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-semibold">
+            You are the organizer of the conference
+          </span>
+        )}
       </div>
 
       <div className="grid w-full grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-4">
@@ -237,6 +282,71 @@ export default function RoomPage() {
             </>
           )}
         </button>
+      </div>
+
+      <div className="flex gap-4 mb-4">
+        <button
+          onClick={leaveRoom}
+          className="inline-flex items-center gap-3 rounded-lg px-4 sm:px-6 py-2 text-sm sm:text-base font-medium transition-all duration-200 active:scale-95 leading-none bg-orange-200 hover:bg-orange-300"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          Покинуть комнату
+        </button>
+
+        {isRoomCreator && (
+          <>
+            <button
+              onClick={() => setShowEndConfirmation(true)}
+              className="inline-flex items-center gap-3 rounded-lg px-4 sm:px-6 py-2 text-sm sm:text-base font-medium transition-all duration-200 active:scale-95 leading-none bg-red-500 hover:bg-red-600 text-white"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
+                />
+              </svg>
+              Завершить конференцию
+            </button>
+
+            {showEndConfirmation && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
+                  <h3 className="text-lg font-semibold mb-4">Завершить конференцию?</h3>
+                  <p className="text-gray-600 mb-6">Все участники будут отключены. Это действие нельзя отменить.</p>
+                  <div className="flex gap-3 justify-end">
+                    <button
+                      onClick={() => setShowEndConfirmation(false)}
+                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      Отмена
+                    </button>
+                    <button
+                      onClick={endConferenceForAll}
+                      className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors"
+                    >
+                      Завершить
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {isReconnecting && <div className="font-semibold text-accent-800">Reconnecting to server...</div>}
