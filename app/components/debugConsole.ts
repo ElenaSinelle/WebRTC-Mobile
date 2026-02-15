@@ -6,10 +6,14 @@ export const DebugConsole = () => {
   useEffect(() => {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    const isDev = process.env.NODE_ENV === 'development';
+    // const isDev = process.env.NODE_ENV === 'development';
     const hasEruda = window.localStorage.getItem('eruda-enabled') === 'true';
 
-    if (isDev && (isMobile || hasEruda)) {
+    if (
+      // isDev &&
+      isMobile ||
+      hasEruda
+    ) {
       const script = document.createElement('script');
       script.src = 'https://cdn.jsdelivr.net/npm/eruda';
       script.async = true;
