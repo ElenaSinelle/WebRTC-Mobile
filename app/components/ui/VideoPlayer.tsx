@@ -28,7 +28,14 @@ export const VideoPlayer = ({
   return (
     <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-900 shadow-xl border border-gray-200">
       {stream ? (
-        <video ref={videoRef} autoPlay playsInline muted={isLocal || isMuted} className="w-full h-full object-cover" />
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          webkit-playsinline="true"
+          muted={isLocal || isMuted}
+          className="w-full h-full object-cover"
+        />
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gray-800">
           <span className="text-gray-400">No video</span>

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import type { Room } from 'trystero';
 import { createTrysteroRoom } from '../lib/trystero-config';
 import type { Participant } from '../lib/types';
+import { useMobileDetect } from './useMobileDetect';
 
 export const useTrysteroRoom = (roomId: string, localStream: MediaStream | null) => {
   const [participants, setParticipants] = useState<Map<string, Participant>>(new Map());
@@ -12,6 +13,7 @@ export const useTrysteroRoom = (roomId: string, localStream: MediaStream | null)
 
   const roomRef = useRef<Room | null>(null);
   const streamsRef = useRef<Map<string, MediaStream>>(new Map());
+  const { browser, isAndroid } = useMobileDetect();
 
   useEffect(() => {
     if (!localStream) {
@@ -34,11 +36,31 @@ export const useTrysteroRoom = (roomId: string, localStream: MediaStream | null)
         if (!mounted) return;
 
         setMyPeerId(selfId);
-        // console.log('Connected to Trystero room with ID:', selfId);
+        console.log('Connected to Trystero room with ID:', selfId);
+        console.log('browser: ', browser);
+
+        if (isAndroid) {
+          // Timeout for initialisation on Android
+          setTimeout(() => {
+            if (roomRef.current && localStream) {
+              roomRef.current.addStream(localStream);
+              console.log('Local stream added to room (Android delay)');
+            }
+          }, 300);
+        } else {
+          room.addStream(localStream);
+        }
 
         // send stream to all participants
         room.addStream(localStream);
         // console.log('Local stream added to room');
+
+        if (roomRef.current) {
+          // invoking ICE-gathering
+          setTimeout(() => {
+            console.log('Forcing ICE candidate gathering...');
+          }, 500);
+        }
 
         // listen to new participants
         room.onPeerJoin((peerId: string) => {
