@@ -1,21 +1,23 @@
 export default function Footer() {
   return (
-    <footer className="w-full mt-auto px-4 pb-4">
-      <div className="max-w-xl mx-auto flex flex-col gap-3 items-center">
-        <div className="w-full h-px bg-indigo-400/60" />
+    <footer className="w-full mt-auto bg-background-primary border-t border-border-secondary">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-text-secondary">
+          <div className="flex gap-6">
+            <span className="hover:text-text-primary transition cursor-pointer">HD video</span>
+            <span className="hover:text-text-primary transition cursor-pointer">Clear voice</span>
+            <span className="hover:text-text-primary transition cursor-pointer">Multi-peer</span>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center text-xs">
-          <div>HD video</div>
-          <div>Clear voice</div>
-          <div>Several participants</div>
+          <div className="flex gap-6">
+            <span className="hover:text-text-primary transition cursor-pointer">P2P encrypted</span>
+            <span className="hover:text-text-primary transition cursor-pointer">No data storage</span>
+            <span className="hover:text-text-primary transition cursor-pointer">No registration</span>
+          </div>
         </div>
 
-        <div className="w-full flex flex-col gap-3 text-sm">
-          <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
-            <span className="text-center sm:text-left">Safe P2P connection</span>
-
-            <span className="text-center sm:text-right">No data saved</span>
-          </div>
+        <div className="mt-6 text-center text-xs text-text-secondary">
+          © {new Date().getFullYear()} WebRTC Conference. All rights reserved.
         </div>
       </div>
     </footer>

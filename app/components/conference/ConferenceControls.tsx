@@ -30,34 +30,37 @@ export const ConferenceControls = ({
   copiedId,
 }: ConferenceControlsProps) => {
   return (
-    <div className="flex flex-col gap-4 w-full">
-      <div className="flex flex-wrap justify-center gap-4">
-        <Button onClick={onToggleMute} variant={isMuted ? 'danger' : 'primary'}>
+    <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto bg-background-card p-6 ">
+      {/* Media controls */}
+      <div className="flex flex-wrap justify-center gap-3">
+        <Button onClick={onToggleMute} variant={isMuted ? 'danger' : 'primary'} size="md">
           {isMuted ? 'Enable microphone' : 'Disable microphone'}
         </Button>
 
-        <Button onClick={onToggleVideo} variant={isVideoOff ? 'danger' : 'primary'}>
+        <Button onClick={onToggleVideo} variant={isVideoOff ? 'danger' : 'primary'} size="md">
           {isVideoOff ? 'Enable camera' : 'Disable camera'}
         </Button>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-4">
-        <Button onClick={onCopyLink} variant="secondary">
+      {/* Share controls */}
+      <div className="flex flex-wrap justify-center gap-3">
+        <Button onClick={onCopyLink} variant="secondary" size="md">
           {copiedLink ? 'Link copied!' : 'Copy room link'}
         </Button>
 
-        <Button onClick={onCopyRoomId} variant="secondary">
+        <Button onClick={onCopyRoomId} variant="secondary" size="md">
           {copiedId ? 'Room Id copied!' : 'Copy room ID'}
         </Button>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-4">
-        <Button onClick={onLeave} variant="secondary">
+      {/* Session controls */}
+      <div className="flex flex-wrap justify-center gap-3 pt-2 border-t border-border-secondary">
+        <Button onClick={onLeave} variant="secondary" size="md">
           Leave room
         </Button>
 
         {isCreator && (
-          <Button onClick={onEndConference} variant="danger">
+          <Button onClick={onEndConference} variant="danger" size="md">
             End conference
           </Button>
         )}

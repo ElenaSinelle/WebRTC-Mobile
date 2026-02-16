@@ -47,7 +47,7 @@ export default function RoomPage() {
   if (mediaError) {
     return (
       <div className="w-full max-w-7xl mx-auto p-6">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <div className="bg-status-danger/10 border border-status-danger/30 text-status-danger px-4 py-3 rounded-md">
           <p className="font-bold">Camera/microphone access error</p>
           <p>{mediaError}</p>
           <Button variant="primary" onClick={() => window.location.reload()} className="mt-4">
@@ -59,42 +59,51 @@ export default function RoomPage() {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6 flex flex-col gap-6">
-      <RoomInfo isCreator={isCreator} participantsCount={participants.size} connectionStatus={connectionStatus} />
+    <div className="w-full max-w-7xl mx-auto p-4 flex flex-col gap-4">
+      <div className="bg-background-card rounded-md shadow-lg border border-border-secondary p-6">
+        <RoomInfo isCreator={isCreator} participantsCount={participants.size} connectionStatus={connectionStatus} />
+      </div>
 
-      <ParticipantsGrid
-        localStream={localStream}
-        participants={participants}
-        isMuted={isMuted}
-        isVideoOff={isVideoOff}
-      />
-
-      <ConferenceControls
-        isMuted={isMuted}
-        isVideoOff={isVideoOff}
-        isCreator={isCreator}
-        onToggleMute={toggleMute}
-        onToggleVideo={toggleVideo}
-        onCopyLink={copyRoomLink}
-        onLeave={handleLeave}
-        onEndConference={openEndConfirmation}
-        copiedLink={copied === 'link'}
-        onCopyRoomId={copyRoomId}
-        copiedId={copied === 'id'}
-      />
+      <div className="bg-background-card rounded-md shadow-lg border border-border-secondary p-6">
+        <ParticipantsGrid
+          localStream={localStream}
+          participants={participants}
+          isMuted={isMuted}
+          isVideoOff={isVideoOff}
+        />
+      </div>
+      <div className="bg-background-card rounded-md shadow-lg border border-border-secondary">
+        <ConferenceControls
+          isMuted={isMuted}
+          isVideoOff={isVideoOff}
+          isCreator={isCreator}
+          onToggleMute={toggleMute}
+          onToggleVideo={toggleVideo}
+          onCopyLink={copyRoomLink}
+          onLeave={handleLeave}
+          onEndConference={openEndConfirmation}
+          copiedLink={copied === 'link'}
+          onCopyRoomId={copyRoomId}
+          copiedId={copied === 'id'}
+        />
+      </div>
 
       {showEndConfirmation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
-            <h3 className="text-lg font-semibold mb-4">End conference?</h3>
-            <p className="text-gray-600 mb-6">All participants will be disconnected. This action cannot be undone.</p>
-            <div className="flex gap-3 justify-end">
-              <Button variant="secondary" onClick={closeEndConfirmation}>
-                Cancel
-              </Button>
-              <Button variant="danger" onClick={handleEndConference}>
-                End
-              </Button>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-background-card rounded-md shadow-xl max-w-sm w-full border border-border-secondary">
+            <div className="p-6">
+              <h3 className="text-xl font-semibold text-text-primary mb-2">End conference?</h3>
+              <p className="text-text-secondary mb-6">
+                All participants will be disconnected. This action cannot be undone.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <Button variant="secondary" onClick={closeEndConfirmation}>
+                  Cancel
+                </Button>
+                <Button variant="danger" onClick={handleEndConference}>
+                  End conference
+                </Button>
+              </div>
             </div>
           </div>
         </div>

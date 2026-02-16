@@ -10,3 +10,61 @@ body {
 body {
   margin: 0;
 }
+
+@layer base {
+  :root {
+    /* Background colors */
+    /* --bg-primary: #fdf6e9; */
+
+    --bg-primary: #fef8d7;
+    --bg-secondary: #d6f5f5;
+    --bg-card: #ffffff;
+    --bg-input: #f5f5f5;
+    --bg-hover-dark: #1f2c3a;
+    --bg-hover-light: #afeeee;
+    --bg-hover-danger: #da4949;
+
+    /* Text colors */
+    --text-primary: #2d3e50;
+    --text-secondary: #6b7a8f;
+    --text-light: #ffffff;
+
+    /* Border colors */
+    /* --border-light: #e5e9f0; */
+    --border-light: #fdf6e9;
+    --border-secondary: #d6f5f5;
+    --border-primary: #2d3e50;
+
+    /* Status colors */
+    --danger: #ec6a6a;
+    --success: #10b981;
+    --warning: #f59e0b;
+  }
+}
+
+body {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+  color: var(--text-primary);
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-primary);
+  border-radius: 4px;
+  opacity: 0.3;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-primary);
+  opacity: 0.5;
+}

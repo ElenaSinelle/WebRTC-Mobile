@@ -14,7 +14,7 @@ export const ParticipantsGrid = ({ localStream, participants, isMuted, isVideoOf
   const participantsArray = Array.from(participants.values());
 
   return (
-    <div className="grid w-full grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-4">
+    <div className="grid w-full grid-cols-1 xl:grid-cols-2 gap-4">
       <VideoPlayer stream={localStream} isLocal isMuted={isMuted} isVideoOff={isVideoOff} participantName="You" />
 
       {participantsArray.map((participant, index) => (

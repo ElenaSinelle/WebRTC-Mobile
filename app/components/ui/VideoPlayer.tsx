@@ -42,7 +42,7 @@ export const VideoPlayer = ({
   }, [stream, isIOS, isLocal]);
 
   return (
-    <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-900 shadow-xl border border-gray-200">
+    <div className="relative aspect-video rounded-md overflow-hidden bg-background-secondary shadow-lg border border-text-primary/10">
       {stream ? (
         <video
           ref={videoRef}
@@ -53,20 +53,21 @@ export const VideoPlayer = ({
           className="w-full h-full object-cover"
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gray-800">
-          <span className="text-gray-400">No video</span>
+        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-background-primary to-background-secondary">
+          <span className="text-text-secondary">No video</span>
         </div>
       )}
-
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+      <div className="absolute bottom-0 left-0 right-0 p-4 ">
         <div className="flex items-center justify-between">
-          <span className="text-white font-semibold">{isLocal ? 'You' : participantName}</span>
+          <span className="text-text-primary font-medium">{isLocal ? 'You' : participantName}</span>{' '}
           <div className="flex gap-2">
             {isLocal && isMuted && (
-              <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">MUTE</span>
+              <span className="bg-status-danger text-white px-2 py-1 rounded text-xs font-medium shadow-lg">MUTE</span>
             )}
             {isLocal && isVideoOff && (
-              <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">VIDEO OFF</span>
+              <span className="bg-status-danger text-white px-2 py-1 rounded text-xs font-medium shadow-lg">
+                VIDEO OFF
+              </span>
             )}
           </div>
         </div>
