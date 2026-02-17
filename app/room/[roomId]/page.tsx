@@ -8,13 +8,16 @@ import { ParticipantsGrid } from '@/app/components/conference/ParticipantsGrid';
 import { ConferenceControls } from '@/app/components/conference/ConferenceControls';
 import { RoomInfo } from '@/app/components/conference/RoomInfo';
 import { Button } from '@/app/components/ui/Button';
-import { useTelegramDetection } from '@/app/hooks/useTelegramDetection';
-import { TelegramRedirect } from '@/app/components/ui/TelegramRedirect';
+import { useState } from 'react';
+import { TelegramMiniAppDetector } from '@/app/components/ui/TelegramMiniAppDetector';
+// import { useTelegramDetection } from '@/app/hooks/useTelegramDetection';
+// import { TelegramRedirect } from '@/app/components/ui/TelegramRedirect';
 
 export default function RoomPage() {
   const params = useParams();
   const roomId = params?.roomId as string;
-  const { isTelegram } = useTelegramDetection();
+  const [isTelegramChecked, setIsTelegramChecked] = useState(false);
+  // const { isTelegram } = useTelegramDetection();
 
   const { stream: localStream, isMuted, isVideoOff, toggleMute, toggleVideo, error: mediaError } = useMediaStream();
 
@@ -36,6 +39,10 @@ export default function RoomPage() {
     closeEndConfirmation,
   } = useRoom(roomId);
 
+  if (!isTelegramChecked) {
+    return <TelegramMiniAppDetector onDetectionComplete={() => setIsTelegramChecked(true)} />;
+  }
+
   const handleLeave = () => {
     leavePeerRoom();
     navigateLeave();
@@ -47,9 +54,9 @@ export default function RoomPage() {
     navigateLeave();
   };
 
-  if (isTelegram) {
-    return <TelegramRedirect />;
-  }
+  // if (isTelegram) {
+  //   return <TelegramRedirect />;
+  // }
 
   if (mediaError) {
     return (

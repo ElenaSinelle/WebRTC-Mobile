@@ -5,7 +5,7 @@ import type { Room } from 'trystero';
 import { createTrysteroRoom } from '../lib/trystero-config';
 import type { Participant } from '../lib/types';
 import { useMobileDetect } from './useMobileDetect';
-import { useTelegramDetection } from './useTelegramDetection';
+// import { useTelegramDetection } from './useTelegramDetection';
 
 export const useTrysteroRoom = (roomId: string, localStream: MediaStream | null) => {
   const [participants, setParticipants] = useState<Map<string, Participant>>(new Map());
@@ -20,7 +20,7 @@ export const useTrysteroRoom = (roomId: string, localStream: MediaStream | null)
   const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
 
   const { isAndroid, isIOS } = useMobileDetect();
-  const { isTelegramWebView } = useTelegramDetection();
+  // const { isTelegramWebView } = useTelegramDetection();
 
   const safeSetTimeout = useCallback((callback: () => void, delay: number) => {
     const timeout = setTimeout(() => {
@@ -71,16 +71,17 @@ export const useTrysteroRoom = (roomId: string, localStream: MediaStream | null)
         };
 
         // initialization depending on platform
-        if (isTelegramWebView) {
-          console.log('Telegram WebView detected ');
+        // if (isTelegramWebView) {
+        //   console.log('Telegram WebView detected ');
 
-          // Timeout for initialization in Telegram
-          safeSetTimeout(() => {
-            if (roomRef.current && localStream && mounted) {
-              sendStreamToPeer();
-            }
-          }, 1000);
-        } else if (isAndroid) {
+        //   // Timeout for initialization in Telegram
+        //   safeSetTimeout(() => {
+        //     if (roomRef.current && localStream && mounted) {
+        //       sendStreamToPeer();
+        //     }
+        //   }, 1000);
+        // } else
+        if (isAndroid) {
           // Timeout for initialization on Android
           safeSetTimeout(() => {
             if (roomRef.current && localStream && mounted) {
@@ -122,7 +123,9 @@ export const useTrysteroRoom = (roomId: string, localStream: MediaStream | null)
         room.onPeerJoin((peerId: string) => {
           console.log('Peer joined:', peerId);
 
-          const delay = isTelegramWebView ? 1000 : isIOS ? 200 : 0;
+          const delay =
+            // isTelegramWebView ? 1000 :
+            isIOS ? 200 : 0;
 
           // send stream to a new participant
           if (delay > 0) {
@@ -145,7 +148,11 @@ export const useTrysteroRoom = (roomId: string, localStream: MediaStream | null)
           if (!mounted) return;
 
           // activate audio for iOS
-          if (isIOS || isTelegramWebView) {
+          if (
+            isIOS
+            //  ||
+            // isTelegramWebView
+          ) {
             stream.getAudioTracks().forEach((track) => {
               track.enabled = true;
             });
@@ -234,7 +241,15 @@ export const useTrysteroRoom = (roomId: string, localStream: MediaStream | null)
 
       setParticipants(new Map());
     };
-  }, [roomId, localStream, isAndroid, isIOS, isTelegramWebView, retryCount, safeSetTimeout]);
+  }, [
+    roomId,
+    localStream,
+    isAndroid,
+    isIOS,
+    // isTelegramWebView,
+    retryCount,
+    safeSetTimeout,
+  ]);
 
   const leaveRoom = useCallback(() => {
     console.log('Leaving room...');
