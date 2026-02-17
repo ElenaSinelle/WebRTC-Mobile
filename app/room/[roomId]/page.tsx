@@ -8,7 +8,7 @@ import { ParticipantsGrid } from '@/app/components/conference/ParticipantsGrid';
 import { ConferenceControls } from '@/app/components/conference/ConferenceControls';
 import { RoomInfo } from '@/app/components/conference/RoomInfo';
 import { Button } from '@/app/components/ui/Button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TelegramMiniAppDetector } from '@/app/components/ui/TelegramMiniAppDetector';
 // import { useTelegramDetection } from '@/app/hooks/useTelegramDetection';
 // import { TelegramRedirect } from '@/app/components/ui/TelegramRedirect';
@@ -16,8 +16,31 @@ import { TelegramMiniAppDetector } from '@/app/components/ui/TelegramMiniAppDete
 export default function RoomPage() {
   const params = useParams();
   const roomId = params?.roomId as string;
-  const [isTelegramChecked, setIsTelegramChecked] = useState(false);
+
+  console.log(' [RoomPage] RENDER START');
+  console.log(' [RoomPage] window.location.href:', typeof window !== 'undefined' ? window.location.href : 'server');
+  console.log(' [RoomPage] document.referrer:', typeof window !== 'undefined' ? document.referrer : 'server');
+
+  // const [isTelegramChecked, setIsTelegramChecked] = useState(false);
+  const [isTelegramChecked, setIsTelegramChecked] = useState(() => {
+    console.log('[RoomPage] useState INITIALIZER running');
+    return false;
+  });
   // const { isTelegram } = useTelegramDetection();
+
+  useEffect(() => {
+    console.log(' [RoomPage] useEffect - component mounted');
+    console.log(' [RoomPage] isTelegramChecked AFTER MOUNT:', isTelegramChecked);
+
+    const timer = setTimeout(() => {
+      console.log(' [RoomPage] FORCE RESET');
+      setIsTelegramChecked(false);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  console.log(' [RoomPage] isTelegramChecked BEFORE RENDER:', isTelegramChecked);
 
   const { stream: localStream, isMuted, isVideoOff, toggleMute, toggleVideo, error: mediaError } = useMediaStream();
 
