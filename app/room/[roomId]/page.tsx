@@ -8,10 +8,13 @@ import { ParticipantsGrid } from '@/app/components/conference/ParticipantsGrid';
 import { ConferenceControls } from '@/app/components/conference/ConferenceControls';
 import { RoomInfo } from '@/app/components/conference/RoomInfo';
 import { Button } from '@/app/components/ui/Button';
+import { useTelegramDetection } from '@/app/hooks/useTelegramDetection';
+import { TelegramRedirect } from '@/app/components/ui/TelegramRedirect';
 
 export default function RoomPage() {
   const params = useParams();
   const roomId = params?.roomId as string;
+  const { isTelegram } = useTelegramDetection();
 
   const { stream: localStream, isMuted, isVideoOff, toggleMute, toggleVideo, error: mediaError } = useMediaStream();
 
@@ -43,6 +46,10 @@ export default function RoomPage() {
     closeEndConfirmation();
     navigateLeave();
   };
+
+  if (isTelegram) {
+    return <TelegramRedirect />;
+  }
 
   if (mediaError) {
     return (
