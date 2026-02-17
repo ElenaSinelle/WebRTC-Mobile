@@ -1,29 +1,42 @@
 'use client';
 
-import { useMobileDetect } from '@/app/hooks/useMobileDetect';
+// import { useMobileDetect } from '@/app/hooks/useMobileDetect';
 import { Button } from './Button';
+import { useTelegramDetection } from '@/app/hooks/useTelegramDetection';
+import { useEffect } from 'react';
 
 export const TelegramRedirect = () => {
-  const { isAndroid, isIOS } = useMobileDetect();
+  // const { isAndroid, isIOS } = useMobileDetect();
+  const { isTelegramWebView, isTelegramIOS, isTelegramAndroid, isTelegramDesktop } = useTelegramDetection();
 
   const getInstructions = () => {
-    if (isAndroid) {
+    if (isTelegramAndroid) {
       return {
         title: 'Open in Chrome',
-        instruction: 'Tap the button below to open in Chrome browser',
+        instruction: 'Video calls require Chrome browser',
         buttonText: 'Open in Chrome',
         icon: '📱',
         browserName: 'Chrome',
       };
     }
 
-    if (isIOS) {
+    if (isTelegramIOS) {
       return {
         title: 'Open in Safari',
-        instruction: 'Tap the button below to open in Safari browser',
+        instruction: 'Video calls require Safari browser',
         buttonText: 'Open in Safari',
         icon: '🍎',
         browserName: 'Safari',
+      };
+    }
+
+    if (isTelegramDesktop) {
+      return {
+        title: 'Use Mobile Device',
+        instruction: 'Video calls work best on mobile devices',
+        buttonText: 'Copy Link',
+        icon: '💻',
+        browserName: 'browser',
       };
     }
 
@@ -31,7 +44,7 @@ export const TelegramRedirect = () => {
       title: 'Open in Browser',
       instruction: 'Copy the link and open in your browser',
       buttonText: 'Copy Link',
-      icon: '💻',
+      icon: '🌐',
       browserName: 'browser',
     };
   };
@@ -39,10 +52,11 @@ export const TelegramRedirect = () => {
   const handleOpenInBrowser = () => {
     const url = window.location.href;
 
-    if (isAndroid) {
+    if (isTelegramAndroid) {
       window.location.href = `intent://${window.location.host}${window.location.pathname}#Intent;scheme=https;package=com.android.chrome;end`;
-    } else if (isIOS) {
-      window.location.href = url.replace(/^https?:\/\//, '');
+    } else if (isTelegramIOS) {
+      const safariUrl = url.replace(/^https?:\/\//, '');
+      window.location.href = safariUrl;
     }
 
     navigator.clipboard.writeText(window.location.href).then(() => {
@@ -55,6 +69,24 @@ export const TelegramRedirect = () => {
       alert('✓ Link copied! Please open in your browser');
     });
   };
+
+  useEffect(() => {
+    if (isTelegramWebView) {
+      console.log('Telegram WebView detected - forcing redirect');
+
+      const timer = setTimeout(() => {
+        const shouldRedirect = window.confirm('Video calls do not work inside Telegram. Open in your browser?');
+
+        if (shouldRedirect) {
+          handleOpenInBrowser();
+        }
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isTelegramWebView]);
+
+  if (!isTelegramWebView) return null;
 
   const instructions = getInstructions();
 

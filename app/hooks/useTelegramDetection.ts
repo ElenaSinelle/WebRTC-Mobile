@@ -8,6 +8,9 @@ export const useTelegramDetection = () => {
       return {
         isTelegram: false,
         isTelegramWebView: false,
+        isTelegramDesktop: false,
+        isTelegramIOS: false,
+        isTelegramAndroid: false,
         telegramVersion: null,
         webViewType: null,
         hasWebApp: false,
@@ -24,6 +27,11 @@ export const useTelegramDetection = () => {
     const isTelegram =
       userAgent.includes('Telegram') || userAgent.includes('TelegramBot') || hasTelegramProxy || hasTelegramWebApp;
 
+    // check platform type in Telegram
+    const isTelegramIOS = isTelegram && /iPhone|iPad|iPod/i.test(userAgent);
+    const isTelegramAndroid = isTelegram && /Android/i.test(userAgent);
+    const isTelegramDesktop = isTelegram && !isTelegramIOS && !isTelegramAndroid;
+
     // check WebView type
     let webViewType = null;
     if (isTelegram) {
@@ -31,11 +39,11 @@ export const useTelegramDetection = () => {
         webViewType = 'webview-proxy';
       } else if (hasTelegramWebApp) {
         webViewType = 'webapp';
-      } else if (userAgent.includes('Android')) {
+      } else if (isTelegramAndroid) {
         webViewType = 'android-webview';
-      } else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
+      } else if (isTelegramIOS) {
         webViewType = 'ios-wkwebview';
-      } else if (userAgent.includes('Mac OS')) {
+      } else if (isTelegramDesktop) {
         webViewType = 'desktop';
       } else {
         webViewType = 'unknown';
@@ -52,6 +60,9 @@ export const useTelegramDetection = () => {
       isTelegram
     ) {
       console.log('Telegram detected:', {
+        isTelegramIOS,
+        isTelegramAndroid,
+        isTelegramDesktop,
         webViewType,
         telegramVersion,
         hasProxy: hasTelegramProxy,
@@ -62,7 +73,10 @@ export const useTelegramDetection = () => {
 
     return {
       isTelegram,
-      isTelegramWebView: isTelegram && webViewType !== 'desktop',
+      isTelegramWebView: isTelegram && (isTelegramIOS || isTelegramAndroid),
+      isTelegramDesktop,
+      isTelegramIOS,
+      isTelegramAndroid,
       telegramVersion,
       webViewType,
       hasWebApp: hasTelegramWebApp,
