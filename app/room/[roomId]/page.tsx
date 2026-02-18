@@ -14,7 +14,7 @@ import { Button } from '@/app/components/ui/Button';
 // import { TelegramRedirect } from '@/app/components/ui/TelegramRedirect';
 // import { TelegramHintDetector } from '@/app/components/ui/telegram/TelegramHintDetector';
 // import { useState } from 'react';
-import { TgHintLoader } from '@/app/components/ui/telegram/telegramClient';
+import { TgHintLoader } from '@/app/components/ui/telegramClient';
 
 export default function RoomPage() {
   const params = useParams();
