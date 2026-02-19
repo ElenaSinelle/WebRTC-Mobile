@@ -14,7 +14,15 @@ export default function RoomPage() {
   const params = useParams();
   const roomId = params?.roomId as string;
 
-  const { stream: localStream, isMuted, isVideoOff, toggleMute, toggleVideo, error: mediaError } = useMediaStream();
+  const {
+    stream: localStream,
+    isMuted,
+    isVideoOff,
+    toggleMute,
+    toggleVideo,
+    error: mediaError,
+    retryAccess,
+  } = useMediaStream();
 
   const { participants, connectionStatus, leaveRoom } = useTrysteroRoom(roomId, localStream);
 
@@ -39,7 +47,16 @@ export default function RoomPage() {
         <div className="bg-status-danger/10 border border-status-danger/30 text-status-danger px-4 py-3 rounded-md">
           <p className="font-bold">Camera/microphone access error</p>
           <p>{mediaError}</p>
-          <Button variant="primary" onClick={() => window.location.reload()} className="mt-4">
+          <Button
+            variant="primary"
+            onClick={async () => {
+              const success = await retryAccess?.();
+              if (!success) {
+                window.location.reload();
+              }
+            }}
+            className="mt-4"
+          >
             Try again
           </Button>
         </div>
