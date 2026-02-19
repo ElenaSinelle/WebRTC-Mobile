@@ -62,23 +62,23 @@ export const TgHintLoader = (): null => {
                   <div id="tgHint" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:center;z-index:2147483647;">
                     <div style="background-color:var(--bg-card);border-radius:6px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1),0 8px 10px -6px rgba(0,0,0,0.1);max-width:320px;width:90%;border:1px solid var(--border-secondary);" ${dirAttribute}>
                       <div style="padding:24px;">
-                        <select id="tgLang" style="float:right;margin:-6px 0 8px 0;background-color:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-secondary);border-radius:4px;padding:4px 8px;font-size:12px;">
-                          ${Object.keys(translations)
+                        <select id="tgLang" style="float:right;margin:-6px 0 8px 0;background-color:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-secondary);border-radius:6px;padding:4px 8px;font-size:12px;outline:none;font-family:inherit;">
+                          ${(Object.keys(translations) as LanguageCode[])
                             .map((lang) => `<option value="${lang}">${lang.toUpperCase()}</option>`)
                             .join('')}
                         </select>
                         <h3 style="margin:0 0 8px 0;font-size:20px;font-weight:600;color:var(--text-primary);">${langData.title}</h3>
-                        <p style="color:var(--text-secondary);margin-bottom:16px;line-height:1.5;">${langData.body}</p>
-                        <details style="margin:16px 0;color:var(--text-secondary);">
-                          <summary style="cursor:pointer;font-weight:500;color:var(--text-primary);">${langData.disable}</summary>
-                          <p style="margin:8px 0 0 0;padding-left:8px;font-size:14px;">${langData.disable_ios}</p>
-                          <p style="margin:8px 0 0 0;padding-left:8px;font-size:14px;">${langData.disable_and}</p>
+                        <p style="color:var(--text-secondary);margin-bottom:16px;line-height:1.5;font-size:14px;">${langData.body}</p>
+                        <details style="margin:16px 0;color:var(--text-secondary);font-size:14px;">
+                          <summary style="cursor:pointer;font-weight:500;color:var(--text-primary);margin-bottom:8px;">${langData.disable}</summary>
+                          <p style="margin:8px 0 0 12px;font-size:13px;color:var(--text-secondary);">${langData.disable_ios}</p>
+                          <p style="margin:8px 0 0 12px;font-size:13px;color:var(--text-secondary);">${langData.disable_and}</p>
                         </details>
-                        <div style="display:flex;gap:12px;justify-content:flex-end;">
-                          <button id="tgOk" style="background-color:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-secondary);border-radius:6px;padding:8px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:background-color 0.2s;">
+                        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+                          <button id="tgOk" style="background-color:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-secondary);border-radius:6px;padding:8px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;font-family:inherit;">
                             ${langData.cancel}
                           </button>
-                          <button id="tgOpenBrowser" style="background-color:var(--danger);color:white;border:none;border-radius:6px;padding:8px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:background-color 0.2s;">
+                          <button id="tgOpenBrowser" style="background-color:var(--danger);color:white;border:none;border-radius:6px;padding:8px 16px;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s ease;font-family:inherit;">
                             ${langData.ok}
                           </button>
                         </div>
@@ -134,8 +134,21 @@ export const TgHintLoader = (): null => {
         const openBrowserButton = overlayElement.querySelector<HTMLButtonElement>('#tgOpenBrowser');
         if (openBrowserButton) {
           openBrowserButton.onclick = () => {
-            window.location.href = window.location.href.replace(/^https?:\/\//, '');
-            if (isDev) console.log('Attempting to open in browser');
+            const currentUrl = window.location.href;
+
+            if (/Android/i.test(navigator.userAgent)) {
+              const intentUrl = `intent://${window.location.host}${window.location.pathname}#Intent;scheme=https;package=com.android.chrome;end`;
+              window.location.href = intentUrl;
+            } else if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+              const safariUrl = currentUrl.replace(/^https?:\/\//, '');
+              window.location.href = safariUrl;
+            } else {
+              navigator.clipboard.writeText(currentUrl).then(() => {
+                alert('Link copied! Please open in your browser');
+              });
+            }
+
+            if (isDev) console.log('Attempting to open in external browser');
           };
         }
 
