@@ -9,34 +9,6 @@ export const useMediaStream = () => {
   const [isVideoOff, setIsVideoOff] = useState(false);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // useEffect(() => {
-  //   let mounted = true;
-
-  //   const initStream = async () => {
-  //     try {
-  //       const mediaStream = await navigator.mediaDevices.getUserMedia({
-  //         video: true,
-  //         audio: true,
-  //       });
-
-  //       if (!mounted) return;
-
-  //       streamRef.current = mediaStream;
-  //       setStream(mediaStream);
-  //     } catch (err) {
-  //       console.error('Failed to get media stream:', err);
-  //       setError('Could not access camera/microphone');
-  //     }
-  //   };
-
-  //   initStream();
-
-  //   return () => {
-  //     mounted = false;
-  //     streamRef.current?.getTracks().forEach((track) => track.stop());
-  //   };
-  // }, []);
-
   const initStream = useCallback(async (): Promise<boolean> => {
     // stop stream if it existed
     if (streamRef.current) {
