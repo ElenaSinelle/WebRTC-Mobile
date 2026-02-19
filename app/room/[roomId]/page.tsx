@@ -91,7 +91,7 @@ export default function RoomPage() {
                   Cancel
                 </Button>
                 <Button variant="danger" onClick={handleLeave}>
-                  {participants.size === 0 ? 'End conference' : 'Leave room'}
+                  Leave room
                 </Button>
               </div>
             </div>
