@@ -35,29 +35,6 @@ export const TgHintLoader = (): null => {
       // create overlay html
       const createOverlayHTML = (langData: Translation): string => {
         const dirAttribute = langData.dir ? `dir="${langData.dir}"` : '';
-
-        // return `
-        //   <div id="tgHint" style="position:fixed;inset:0;background:#0006;
-        //        backdrop-filter:blur(5px);display:flex;justify-content:center;
-        //        align-items:center;z-index:2147483647;font:16px/1.4 system-ui;">
-        //     <div style="background:#fff;border-radius:14px;padding:26px 24px;max-width:360px;width:90%;" ${dirAttribute}>
-        //       <select id="tgLang" style="float:right;margin:-6px 0 6px 0;">
-        //         ${Object.keys(translations)
-        //           .map((lang) => `<option value="${lang}">${lang.toUpperCase()}</option>`)
-        //           .join('')}
-        //       </select>
-        //       <h3 style="margin:0 0 12px">${langData.title}</h3>
-        //       <p>${langData.body}</p>
-        //       <details style="margin:12px 0">
-        //         <summary>${langData.disable}</summary>
-        //         <p style="margin:6px 0 0">${langData.disable_ios}</p>
-        //         <p style="margin:6px 0 0">${langData.disable_and}</p>
-        //       </details>
-        //       <button id="tgOk" style="margin-top:14px;padding:6px 12px;border:none;
-        //           background:#0088cc;color:#fff;border-radius:6px;cursor:pointer">${langData.ok}</button>
-        //     </div>
-        //   </div>
-        // `;
         return `
                   <div id="tgHint" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;justify-content:center;align-items:center;z-index:2147483647;">
                     <div style="background-color:var(--bg-card);border-radius:6px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1),0 8px 10px -6px rgba(0,0,0,0.1);max-width:320px;width:90%;border:1px solid var(--border-secondary);" ${dirAttribute}>
@@ -113,15 +90,6 @@ export const TgHintLoader = (): null => {
           };
         }
 
-        // const okButton = overlayElement.querySelector<HTMLButtonElement>('#tgOk');
-        // if (okButton) {
-        //   okButton.onclick = () => {
-        //     overlayElement?.remove();
-        //     overlayElement = null;
-        //     if (isDev) console.log(' tg-hint closed');
-        //   };
-        // }
-
         const cancelButton = overlayElement.querySelector<HTMLButtonElement>('#tgOk');
         if (cancelButton) {
           cancelButton.onclick = () => {
@@ -139,9 +107,20 @@ export const TgHintLoader = (): null => {
             if (/Android/i.test(navigator.userAgent)) {
               const intentUrl = `intent://${window.location.host}${window.location.pathname}#Intent;scheme=https;package=com.android.chrome;end`;
               window.location.href = intentUrl;
+
+              setTimeout(() => {
+                window.close();
+                if (isDev) console.log('Attempted to close Telegram window');
+              }, 500);
             } else if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
               const safariUrl = currentUrl.replace(/^https?:\/\//, '');
               window.location.href = safariUrl;
+
+              if (tgWindow.Telegram?.WebApp && typeof tgWindow.Telegram.WebApp.close === 'function') {
+                tgWindow.Telegram.WebApp.close();
+              } else {
+                setTimeout(() => window.close(), 500);
+              }
             } else {
               navigator.clipboard.writeText(currentUrl).then(() => {
                 alert('Link copied! Please open in your browser');

@@ -32,7 +32,11 @@ export type LanguageCode =
 
 export interface TelegramWindow extends Window {
   Telegram?: {
-    WebApp?: unknown;
+    WebApp?: {
+      close?: () => void;
+      ready?: () => void;
+      expand?: () => void;
+    };
   };
   TelegramWebviewProxy?: unknown;
   TelegramWebview?: unknown;

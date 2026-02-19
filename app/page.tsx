@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from './components/ui/Button';
-import { TgHintLoader } from './components/ui/telegram/TgHintLoader';
-// import { TgHintLoader } from './components/ui/TgHintLoader';
 
 export default function HomePage() {
   const router = useRouter();
@@ -24,7 +22,6 @@ export default function HomePage() {
 
   return (
     <div className="w-full max-w-md mx-auto flex flex-col gap-8 items-center justify-center py-12">
-      <TgHintLoader />
       <div className="text-center space-y-2">
         <h2 className="text-3xl font-light text-text-primary">Start a call</h2>
         <p className="text-text-secondary text-sm">Create a new room or join existing one</p>

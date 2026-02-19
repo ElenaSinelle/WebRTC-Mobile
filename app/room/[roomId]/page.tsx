@@ -9,7 +9,6 @@ import { ConferenceControls } from '@/app/components/conference/ConferenceContro
 import { RoomInfo } from '@/app/components/conference/RoomInfo';
 import { Button } from '@/app/components/ui/Button';
 import { TgHintLoader } from '@/app/components/ui/telegram/TgHintLoader';
-// import { TgHintLoader } from '@/app/components/ui/TgHintLoader';
 
 export default function RoomPage() {
   const params = useParams();
